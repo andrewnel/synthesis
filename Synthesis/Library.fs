@@ -38,8 +38,10 @@ let digits n =
     count n
     
 
-let minmax _ =
-    failwith "Not implemented"
+let minmax tuple =
+    match  tuple with
+    | (a, b, c, d) -> 
+        (min (min a b) (min c d), max (max a b) (max c d)) 
 
 let isLeap y =
     match y < 1582 with
@@ -63,11 +65,21 @@ let month = function
 | 10 -> ("October", 31)
 | 11 -> ("November", 30)
 | 12 -> ("December", 31)
-| _ -> failwith "Ëxception: month not supported"
+| _ -> failwith "Exception: month not supported"
 
 
-let toBinary _ =
-    failwith "Not implemented"
+let toBinary i =
+    let rec divide2 n =
+        match n = 0 with 
+        | true -> ""
+        | _ -> 
+            match n % 2 = 0 with 
+            | true -> divide2(n/2) + "0" 
+            | _ -> divide2(n/2) + "1"
+    match i >= 0, i = 0 with
+    | (true, false) -> divide2 i
+    | (true, true) -> "0" 
+    | _ -> failwith "Exception: expecting positive value"
 
 let bizFuzz _ =
     failwith "Not implemented"
