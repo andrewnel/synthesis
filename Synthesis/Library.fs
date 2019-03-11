@@ -81,11 +81,49 @@ let toBinary i =
     | (true, true) -> "0" 
     | _ -> failwith "Exception: expecting positive value"
 
-let bizFuzz _ =
-    failwith "Not implemented"
 
-let monthDay _ _ =
-    failwith "Not implemented"
+let bizFuzz n = let rec divisible (i, a, b, c) = match i = n + 1 with | true -> (a,b,c) | false  ->  match (i % 3 = 0, i % 5 = 0, i % 3 = 0 && i % 5 = 0)  with
+                                                                                                     | false, false, false -> divisible(i+1,a, b, c)
+                                                                                                     | false, false, true -> divisible(i+1,a, b, c+1)
+                                                                                                     | false, true, false -> divisible(i+1,a, b+1, c)
+                                                                                                     | false, true, true -> divisible(i+1,a, b+1, c+1)
+                                                                                                     | true, false, false -> divisible(i+1,a+1, b, c)
+                                                                                                     | true, false, true -> divisible(i+1,a+1, b, c+1)
+                                                                                                     | true, true, false -> divisible(i+1,a+1, b+1, c)
+                                                                                                     | true, true, true -> divisible(i+1,a+1, b+1, c+1)
+                match n > 0 with | true -> divisible (1,0,0,0) | false -> (0,0,0)
 
-let coord _ =
-    failwith "Not implemented"
+
+let monthDay d y =
+    let rec sumDays i s =
+        match s >= d with 
+        | true -> i-1
+        | _ -> 
+            match isLeap y && i = 2 with
+            | true -> sumDays (i+1) (s+29)
+            | _ -> 
+            match month i with
+            | _, a -> sumDays (i+1) (s+a)  
+    match (((d < 1 || d > 366) && isLeap y) || ((d < 1 || d > 365) && isLeap y = false)) || y < 1582 with
+    | true -> failwith "Exception: Invalid day or year"
+    | _ -> match month (sumDays 1 0) with | a,_ -> a 
+
+
+let sqrt n =
+    let rec calculate guess i =
+        match i with
+        | 10 -> guess
+        | _ ->
+            let g = (guess + n/guess) / 2.0
+            calculate g (i+1)
+    match n <= 0.0 with
+    | true -> failwith "Impossibru!"
+    | _ ->
+        calculate (n/2.0) 0
+
+let coord x y =
+    let dist p1 p2 =
+        match p1,p2 with | ((a,b),(c,d)) -> sqrt ((a-c)*(a-c) + (b-d)*(b-d))
+    let within i lc w h =
+        match i,lc with | ((ic1,ic2), (lc1,lc2)) -> (ic1 : float) >= (lc1 : float) && (ic1 : float) <= (lc1+w : float) && (ic2 : float) <= (lc2 : float) && (ic2 : float) >= (lc2-h : float)
+    (dist x y), (fun x y -> within x y)
